@@ -71,18 +71,63 @@ def feature_engineering(df):
 
 def encode_data(df):
     """
-    Mengubah data kategorikal menjadi angka menggunakan LabelEncoder.
+    Mengubah data kategorikal menjadi angka menggunakan Manual Mapping
+    yang disesuaikan dengan file referensi.
     """
-    print("Melakukan Encoding data kategorikal...")
-    le = LabelEncoder()
+    print("Melakukan Encoding data menggunakan Mapping...")
     
-    # Loop semua kolom kecuali yang sudah numerik (seperti SeniorCitizen)
-    # Kita seleksi object dan category (hasil binning)
-    cat_cols = df.select_dtypes(exclude=['number']).columns
+    # Definisi Mapping berdasarkan file preproses.csv
+    mappings = {
+        'InternetService': {
+            'DSL': 0, 
+            'Fiber optic': 1, 
+            'No': 2
+        },
+        'OnlineSecurity': {
+            'No': 0, 
+            'No internet service': 1, 
+            'Yes': 2
+        },
+        'TechSupport': {
+            'No': 0, 
+            'No internet service': 1, 
+            'Yes': 2
+        },
+        'Contract': {
+            'Month-to-month': 0, 
+            'One year': 1, 
+            'Two year': 2
+        },
+        'PaymentMethod': {
+            'Bank transfer (automatic)': 0, 
+            'Credit card (automatic)': 1, 
+            'Electronic check': 2, 
+            'Mailed check': 3
+        },
+        'MonthlyCharges': {
+            'Rendah': 0, 
+            'Sedang': 1, 
+            'Tinggi': 2
+        },
+        'Churn': {
+            'No': 0, 
+            'Yes': 1
+        }
+    }
     
-    for col in cat_cols:
-        df[col] = le.fit_transform(df[col])
-        
+    # Terapkan mapping
+    for col, mapping in mappings.items():
+        if col in df.columns:
+            print(f" - Mapping kolom: {col}")
+            # Menggunakan replace agar aman terhadap tipe data category
+            df[col] = df[col].replace(mapping)
+            
+            # Pastikan tipe data menjadi integer setelah mapping
+            try:
+                df[col] = df[col].astype(int)
+            except ValueError as e:
+                print(f"   Warning: Gagal convert ke int untuk kolom {col}. Error: {e}")
+
     return df
 
 def save_data(df, output_path):
