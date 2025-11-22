@@ -50,8 +50,6 @@ def feature_engineering(df):
     """
     print("Melakukan Feature Engineering (Binning)...")
     # Binning MonthlyCharges menjadi 3 kategori
-    # Menggunakan pd.cut langsung pada kolom baru, lalu drop kolom lama jika perlu
-    # Di sini kita ikuti logika notebook: replace nilai numerik dengan kategori
     df['MonthlyCharges_Category'] = pd.cut(
         df['MonthlyCharges'], 
         bins=3, 
@@ -59,7 +57,6 @@ def feature_engineering(df):
     )
     
     # Hapus kolom MonthlyCharges original yang numerik, 
-    # dan rename kolom kategori menjadi MonthlyCharges agar sesuai output notebook
     df = df.drop('MonthlyCharges', axis=1)
     df = df.rename(columns={'MonthlyCharges_Category': 'MonthlyCharges'})
     
@@ -76,7 +73,6 @@ def encode_data(df):
     """
     print("Melakukan Encoding data menggunakan Mapping...")
     
-    # Definisi Mapping berdasarkan file preproses.csv
     mappings = {
         'InternetService': {
             'DSL': 0, 
@@ -143,9 +139,6 @@ def save_data(df, output_path):
 
 def run_preprocessing():
     # --- Konfigurasi Path ---
-    # Sesuaikan path ini dengan struktur folder repository Anda
-    # Asumsi script ini ada di dalam folder 'preprocessing/'
-    
     base_dir = os.path.dirname(os.path.abspath(__file__))
     root_dir = os.path.dirname(base_dir) # Naik satu level ke root repo
     
